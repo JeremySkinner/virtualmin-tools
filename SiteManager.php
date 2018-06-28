@@ -2,7 +2,8 @@
 
 require 'Help.php';
 require 'Settings.php';
+require 'Virtualmin.php';
 
-$settings = build_settings_from_command_line_args();
-
-print_r($settings);
+$settings = buildSettings();
+$v = new Virtualmin($settings);
+$v->execute();

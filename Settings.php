@@ -2,11 +2,14 @@
 
 class Settings {
 
-  private $mode;
-  private $parent;
-  private $user;
-  private $webroot;
-  private $url;
+  public $mode;
+  public $parent;
+  public $user;
+  public $webroot;
+  public $url;
+  public $database;
+  public $password;
+  public $phpversion;
 
   public function __construct(array $options) {
     $this->url = $options['url'];
@@ -30,12 +33,32 @@ class Settings {
     if (isset($options['webroot'])) {
       $this->webroot = $options['webroot'];
     }
+
+    if(isset($options['database'])) {
+      $this->database = $options['database'];
+    }
+
+    if(isset($options['password'])) {
+      $this->password = $options['password'];
+    }
+
+    if(isset($options['phpversion'])) {
+      $this->phpversion = $options['phpversion'];
+    }
+
+    $this->setDefaults();
   }
 
+  private function setDefaults() {
+    // @todo: load from config
+    if(empty($this->phpversion)) {
+      $this->phpversion = '7.0';
+    }
+  }
 
 }
 
-function build_settings_from_command_line_args() {
+function buildSettings() {
   $option_definitions = [
     'root',
     'url:',
@@ -46,6 +69,8 @@ function build_settings_from_command_line_args() {
     'aliasof:',
     'webroot:',
     'database:',
+    'password:',
+    'phpversion:',
     'help',
   ];
 
@@ -56,11 +81,17 @@ function build_settings_from_command_line_args() {
     exit(0);
   };
 
+  $prompt_for_password = false;
+
   // Must supply root|alias|child|aliasof|childof. If not specified, ask the user.
   if(!isset($options['root']) && !isset($options['alias']) && !isset($options['child']) && !isset($options['aliasof']) && !isset($options['childof'])) {
     do {
       $line = strtolower(readline("Please specify the site type (root, alias, child): "));
     } while($line != 'root' && $line != 'alias' && $line != 'child');
+
+    if ($line == 'root' && !isset($options['password'])) {
+      $prompt_for_password = true;
+    }
 
     $options[$line] = true;
   }
@@ -103,5 +134,51 @@ function build_settings_from_command_line_args() {
     } while(!$options['database']);
   }
 
+  if($prompt_for_password) {
+    $password = trim(readline("Enter a password. Leave blank for it to be auto-generated."));
+    $options['password'] = $password;
+  }
+
+  // If no password specified, generate one.
+  if(empty($options['password'])) {
+    $options['password'] = generatePassword();
+  }
+
   return new Settings($options);
+}
+
+
+// https://gist.github.com/tylerhall/521810
+function generatePassword($length = 9, $add_dashes = false, $available_sets = 'lud') {
+	$sets = array();
+	if(strpos($available_sets, 'l') !== false)
+		$sets[] = 'abcdefghjkmnpqrstuvwxyz';
+	if(strpos($available_sets, 'u') !== false)
+		$sets[] = 'ABCDEFGHJKMNPQRSTUVWXYZ';
+	if(strpos($available_sets, 'd') !== false)
+		$sets[] = '23456789';
+	if(strpos($available_sets, 's') !== false)
+		$sets[] = '!@#$%&*?';
+	$all = '';
+	$password = '';
+	foreach($sets as $set)
+	{
+		$password .= $set[array_rand(str_split($set))];
+		$all .= $set;
+	}
+	$all = str_split($all);
+	for($i = 0; $i < $length - count($sets); $i++)
+		$password .= $all[array_rand($all)];
+	$password = str_shuffle($password);
+	if(!$add_dashes)
+		return $password;
+	$dash_len = floor(sqrt($length));
+	$dash_str = '';
+	while(strlen($password) > $dash_len)
+	{
+		$dash_str .= substr($password, 0, $dash_len) . '-';
+		$password = substr($password, $dash_len);
+	}
+	$dash_str .= $password;
+	return $dash_str;
 }
