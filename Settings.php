@@ -142,17 +142,18 @@ function buildSettings() {
   if($prompt_for_password) {
     $password = trim(readline("Enter a password. Leave blank for it to be auto-generated."));
     $options['password'] = $password;
+
+     // If no password specified, generate one.
+    if(empty($options['password'])) {
+      $options['password'] = generatePassword();
+      print "--------------------------------\n";
+      print "Generated password: \n";
+      print $options['password'];
+      print "Make a note of this!";
+      print "--------------------------------\n";
+    }
   }
 
-  // If no password specified, generate one.
-  if(empty($options['password'])) {
-    $options['password'] = generatePassword();
-    print "--------------------------------\n";
-    print "Generated password: \n";
-    print $options['password'];
-    print "Make a note of this!";
-    print "--------------------------------\n";
-  }
 
   return new Settings($options);
 }
