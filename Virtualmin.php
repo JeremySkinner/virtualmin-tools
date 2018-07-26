@@ -52,7 +52,8 @@ class Virtualmin {
     if ($webroot) {
       vexec("modify-web --domain $domain --document-dir $webroot");
     }
-    //vexec("set-php-directory --domain $domain --dir . --version $phpversion");
+
+    vexec("set-php-directory --domain $domain --dir $webroot --version $phpversion");
   }
 
   public function buildRootSite() {
@@ -71,15 +72,19 @@ class Virtualmin {
     if ($webroot) {
       vexec("modify-web --domain $domain --document-dir $webroot");
     }
-    //vexec("set-php-directory --domain $domain --dir . --version $phpversion");
+
+    vexec("set-php-directory --domain $domain --dir $webroot --version $phpversion");
   }
 }
 
-function vexec($args) {
+function vexec($args, $whatif = true) {
   $cmd = 'virtualmin ' . $args;
 
   print "Executing $cmd\n";
-  return;
+
+  if ($whatif) {
+    return;
+  }
 
   $descriptorspec = [
     0 => ["pipe", "r"],   // stdin is a pipe that the child will read from
