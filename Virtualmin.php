@@ -77,7 +77,7 @@ class Virtualmin {
 function vexec($args) {
   $cmd = 'virtualmin ' . $args;
 
-  print "Executing $cmd";
+  print "Executing $cmd\n";
   return;
 
   $descriptorspec = [

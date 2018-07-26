@@ -147,7 +147,11 @@ function buildSettings() {
   // If no password specified, generate one.
   if(empty($options['password'])) {
     $options['password'] = generatePassword();
-    print 'Generated password: ' . $options['password'];
+    print "--------------------------------\n";
+    print "Generated password: \n";
+    print $options['password'];
+    print "Make a note of this!";
+    print "--------------------------------\n";
   }
 
   return new Settings($options);
