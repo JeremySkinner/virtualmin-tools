@@ -77,7 +77,7 @@ class Virtualmin {
   }
 }
 
-function vexec($args, $whatif = true) {
+function vexec($args, $whatif = false) {
   $cmd = 'virtualmin ' . $args;
 
   print "Executing $cmd\n";
