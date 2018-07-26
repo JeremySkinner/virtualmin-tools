@@ -45,8 +45,9 @@ class Virtualmin {
     $phpversion = $s->phpversion;
     $parent = $s->parent;
     $webroot = $s->webroot;
+    $user = $s->user;
 
-    vexec("create-domain --domain $domain --parent $parent --mysql --db $database --web");
+    vexec("create-domain --domain $domain --parent $parent --dir --mysql --db $database --web");
 
     if ($webroot) {
       vexec("modify-web --domain $domain --document-dir $webroot");
