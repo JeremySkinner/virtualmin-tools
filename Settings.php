@@ -12,7 +12,8 @@ class Settings {
   public $phpversion;
 
   public function __construct(array $options) {
-    $this->url = $options['url'];
+    $this->url = str_replace('https://', '', $options['url']);
+    $this->url = str_replace('http://', '', $this->url);
 
     if (isset($options['root'])) {
       $this->mode = 'root';
@@ -53,6 +54,10 @@ class Settings {
     // @todo: load from config
     if(empty($this->phpversion)) {
       $this->phpversion = '7.0';
+    }
+
+    if (empty($this->webroot)) {
+      $this->webroot = 'app/web';
     }
   }
 
@@ -142,6 +147,7 @@ function buildSettings() {
   // If no password specified, generate one.
   if(empty($options['password'])) {
     $options['password'] = generatePassword();
+    print 'Generated password: ' . $options['password'];
   }
 
   return new Settings($options);
