@@ -54,7 +54,7 @@ class Settings {
 
     if (file_exists(__DIR__ . "/defaults.json")) {
       $defaults = json_decode(file_get_contents(__DIR__ . "/defaults.json"), true);
-      
+
       if (is_array($defaults)) {
         foreach($defaults as $key => $value) {
           if (empty($this->$key)) {
@@ -63,17 +63,7 @@ class Settings {
         }
       }
     }
-
-    // @todo: load from config
-    //if(empty($this->phpversion)) {
-    //  $this->phpversion = '7.0';
-    //}
-
-    //if (empty($this->webroot)) {
-    //  $this->webroot = 'app/web';
-    //}
   }
-
 }
 
 function buildSettings() {
