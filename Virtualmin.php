@@ -8,7 +8,6 @@ class Virtualmin {
     $this->settings = $settings;
   }
 
-
   public function execute() {
     switch($this->settings->mode) {
       case 'root':
@@ -34,7 +33,7 @@ class Virtualmin {
     $domain = str_replace('http://', '', $domain);
     $parent = $s->parent;
 
-    vexec("create-domain --domain $domain --alias $parent");
+    vexec(["create-domain --domain $domain --alias $parent"]);
   }
 
   public function buildChild() {
@@ -47,13 +46,15 @@ class Virtualmin {
     $webroot = $s->webroot;
     $user = $s->user;
 
-    vexec("create-domain --domain $domain --parent $parent --dir --mysql --db $database --web");
+    $commands = [];
+    $commands[] = "create-domain --domain $domain --parent $parent --dir --mysql --db $database --web";
 
     if ($webroot) {
-      vexec("modify-web --domain $domain --document-dir $webroot");
+      $commands[] = "modify-web --domain $domain --document-dir $webroot";
     }
 
-    vexec("set-php-directory --domain $domain --dir $webroot --version $phpversion");
+    $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+    vexec($commands);
   }
 
   public function buildRootSite() {
@@ -67,25 +68,41 @@ class Virtualmin {
     $phpversion = $s->phpversion;
     $webroot = $s->webroot;
 
-    vexec("create-domain --domain $domain --user $user --unix --dir --pass $password --mysql --db $database --web");
+    $commands = [];
+
+    $commands[] = "create-domain --domain $domain --user $user --unix --dir --pass $password --mysql --db $database --web";
 
     if ($webroot) {
-      vexec("modify-web --domain $domain --document-dir $webroot");
+      $commands[] = "modify-web --domain $domain --document-dir $webroot";
     }
 
-    vexec("set-php-directory --domain $domain --dir $webroot --version $phpversion");
+    $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+
+    vexec($commands);
   }
 }
 
-function vexec($args, $whatif = false) {
-  $cmd = 'virtualmin ' . $args;
+function vexec($args, array $commands) {
+  print "About to execute the following commands:\n";
 
-  print "Executing $cmd\n";
+  foreach($commands as $command) {
+    print "virtualmin $command\n";
+  }
 
-  if ($whatif) {
+  do {
+    $continue = strtolower(readline("Continue? [y/n]: "));
+  } while($line != 'y' && $line != 'n');
+
+  if ($continue != 'y') {
     return;
   }
 
+  foreach($commands as $command) {
+    exec_command("virtualmin $command");
+  }
+}
+
+function exec_command($cmd) {
   $descriptorspec = [
     0 => ["pipe", "r"],   // stdin is a pipe that the child will read from
     1 => ["pipe", "w"],   // stdout is a pipe that the child will write to
@@ -93,7 +110,6 @@ function vexec($args, $whatif = false) {
   ];
 
   ob_implicit_flush(true);
-  //ob_end_flush();
 
  flush();
 
