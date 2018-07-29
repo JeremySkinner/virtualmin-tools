@@ -53,7 +53,10 @@ class Virtualmin {
       $commands[] = "modify-web --domain $domain --document-dir $webroot";
     }
 
-    $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+    if ($phpversion) {
+      $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+    }
+
     vexec($commands);
   }
 
@@ -76,13 +79,15 @@ class Virtualmin {
       $commands[] = "modify-web --domain $domain --document-dir $webroot";
     }
 
-    $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+    if ($phpversion) {
+      $commands[] = "set-php-directory --domain $domain --dir $webroot --version $phpversion";
+    }
 
     vexec($commands);
   }
 }
 
-function vexec($args, array $commands) {
+function vexec(array $commands) {
   print "About to execute the following commands:\n";
 
   foreach($commands as $command) {
@@ -91,7 +96,7 @@ function vexec($args, array $commands) {
 
   do {
     $continue = strtolower(readline("Continue? [y/n]: "));
-  } while($line != 'y' && $line != 'n');
+  } while($continue != 'y' && $continue != 'n');
 
   if ($continue != 'y') {
     return;

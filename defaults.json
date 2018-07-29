@@ -1,0 +1,4 @@
+{
+  "phpversion": "7.0",
+  "webroot": "app/web"
+}
