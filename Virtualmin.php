@@ -21,11 +21,6 @@ class Virtualmin {
     }
   }
 
-  public function command($cmd) {
-    $this->args .= "$cmd ";
-    return $this;
-  }
-
   public function buildAlias() {
     $s = $this->settings;
     $domain = $s->url;
