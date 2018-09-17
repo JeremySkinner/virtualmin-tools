@@ -41,7 +41,7 @@ class Virtualmin {
     $user = $s->user;
 
     $commands = [];
-    $commands[] = "create-domain --domain $domain --parent $parent --dir --mysql --db $database --web";
+    $commands[] = "create-domain --domain $domain --parent $parent --dir --mysql --db $database --web --ssl --letsencrypt";
 
     if ($webroot) {
       $commands[] = "modify-web --domain $domain --document-dir $webroot";
