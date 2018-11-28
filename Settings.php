@@ -152,7 +152,7 @@ function buildSettings() {
       print "--------------------------------\n";
       print "Generated password: \n";
       print $options['password'];
-      print "Make a note of this!";
+      print "\nMake a note of this!";
       print "--------------------------------\n";
     }
   }
