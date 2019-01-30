@@ -27,7 +27,7 @@ class Virtualmin {
     $domain = str_replace('http://', '', $domain);
     $parent = $s->parent;
 
-    vexec(["create-domain --domain $domain --alias $parent"]);
+    vexec(["create-domain --domain $domain --alias $parent --web"]);
   }
 
   public function buildChild() {
